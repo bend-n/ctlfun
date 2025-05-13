@@ -635,8 +635,8 @@ impl TerminalInputParser {
                 *STATE_TABLE.get_unchecked(self.state as usize + class)
             };
 
-            let is_bell = byte == b'\a';
-            if is_bell && (self.state == State::CommandString || self.state == State::ControlString) {
+            let is_bell = byte == b'\x07'; // \a
+            if is_bell && (self.state == State::CommandString || self.state == State::CharacterString) {
                 state = State::FinishSequence;
             }
 
