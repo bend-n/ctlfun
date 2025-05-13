@@ -604,7 +604,11 @@ impl TerminalInputParser {
 
     pub fn parse_byte(&mut self, byte: u8) -> TerminalInput {
         if byte >= 0x80 {
-            if self.state != State::Ground {
+            if matches!(self.state, State::CommandString | State::CharacterString) {
+                self.ctl.bytes.push(byte);
+                return TerminalInput::Continue;
+            }
+            else if self.state != State::Ground {
                 self.state.poison();
                 return TerminalInput::Continue;
             }
@@ -636,6 +640,11 @@ impl TerminalInputParser {
             };
 
             let is_bell = byte == b'\x07'; // \a
+
+            // if is_bell {
+            //     dbg!(&self);
+            // }
+
             if is_bell && (self.state == State::CommandString || self.state == State::CharacterString) {
                 state = State::FinishSequence;
             }
@@ -725,11 +734,11 @@ mod tests {
     #[test]
     fn bendn() {
         let mut t = super::TerminalInputParser::new();
-        for &char in "\x1b]7;file://klunk/home/os/pattypan\x07\x1b]0;~/pattypan\x07\x1b[30m\x1b(B\x1b[m hi sartha"
+        for &char in "[0m]0; fish in  pattypan [K\n[49C[?2004h[>4;1m[=5u= no chars get through?"
             .as_bytes()
         {
             use super::TerminalInput::*;
-            dbg!(char as char, t.parse_byte(char));
+            println!("{char:?}, {:?}", t.parse_byte(char));
         }
     }
 }
