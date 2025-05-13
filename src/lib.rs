@@ -1,4 +1,4 @@
-pub mod recognizer;
+//pub mod recognizer;
 
 mod utf8;
 
@@ -716,6 +716,20 @@ impl TerminalInputParser {
                     TerminalInput::Control(&self.ctl)
                 }
             }
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn bendn() {
+        let mut t = super::TerminalInputParser::new();
+        for &char in "\x1b]7;file://klunk/home/os/pattypan\x07\x1b]0;~/pattypan\x07\x1b[30m\x1b(B\x1b[m hi sartha"
+            .as_bytes()
+        {
+            use super::TerminalInput::*;
+            dbg!(char as char, t.parse_byte(char));
         }
     }
 }
