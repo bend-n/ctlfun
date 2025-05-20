@@ -270,7 +270,7 @@ const STATE_TABLE: [State; 0xE0] = [
 
 #[repr(u8)]
 #[derive(Copy, Clone)]
-enum Class {
+pub enum Class {
     /// C0 Control Functions
     ///
     /// 00..1F
@@ -349,7 +349,7 @@ enum Class {
 
 #[repr(u8)]
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
-enum State {
+pub enum State {
     // All base states
 
     Ground                      = 0x00,
@@ -432,7 +432,7 @@ enum State {
 
 #[repr(u8)]
 #[derive(Copy, Clone)]
-enum Action {
+pub enum Action {
     // Variant is never constructed, but is matched on
     #[allow(dead_code)]
     /// Return Continue
@@ -550,22 +550,22 @@ pub struct ControlFunction {
     ///
     /// For C0 and C1 controls, which are only 1 byte,
     /// this is the only necessary field.
-    start: u8,
+    pub start: u8,
     /// Whether this control sequence has a private parameter string.
-    private: bool,
+    pub private: bool,
     /// The parameters of the control sequence, if it is one.
-    params: Vec<Parameter>,
+    pub params: Vec<Parameter>,
     /// If this function is a control string,
     /// this is the string's content.
     ///
     /// Otherwise, it's the intermediate bytes of the function.
     /// For control sequences with private parameters, this contains the raw parameter string.
-    bytes: Vec<u8>,
+    pub bytes: Vec<u8>,
     /// The final byte of the control function.
     ///
     /// For C0 and C1 controls, as well as control strings,
     /// this field is left unset.
-    end: u8,
+    pub end: u8,
 }
 
 #[derive(Clone, Eq, PartialEq, Debug)]
@@ -588,13 +588,13 @@ pub enum TerminalInput<'a> {
 #[derive(Clone, Debug, Default)]
 pub struct TerminalInputParser {
     /// The current parsing state.
-    state: State,
+    pub state: State,
     /// Container for parsed control function data.
-    ctl: ControlFunction,
+    pub ctl: ControlFunction,
     /// Accumulator for current control sequence parameter.
-    pacc: Parameter,
+    pub pacc: Parameter,
     /// UTF-8 character decoder.
-    utf8: utf8::UTF8Decoder
+    pub utf8: utf8::UTF8Decoder
 }
 
 impl TerminalInputParser {
