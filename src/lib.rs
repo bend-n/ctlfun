@@ -530,9 +530,9 @@ impl Parameter {
             },
 
             Self::Value(v) => {
-                let (v2, oflw) = v.overflowing_add(x);
-                *v = v2;
-                oflw
+                let result = v.checked_mul(10).and_then(|v| v.checked_add(x));
+                *v = result.unwrap_or_default();
+                result.is_none()
             }
         }
     }
