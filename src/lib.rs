@@ -659,6 +659,10 @@ impl TerminalInputParser {
                 Action::Char     => TerminalInput::Char(byte as char),
                 Action::C01Control => {
                     self.ctl.start = byte;
+                    self.ctl.params.clear();
+                    self.ctl.bytes.clear();
+                    self.ctl.private = false;
+                    self.ctl.end = 0;
                     TerminalInput::Control(&self.ctl)
                 },
 
@@ -666,6 +670,8 @@ impl TerminalInputParser {
                     self.ctl.start = byte;
                     self.ctl.params.clear();
                     self.ctl.bytes.clear();
+                    self.ctl.private = false;
+                    self.ctl.end = 0;
                     TerminalInput::Continue
                 },
 
@@ -734,11 +740,11 @@ mod tests {
     #[test]
     fn bendn() {
         let mut t = super::TerminalInputParser::new();
-        for &char in "[0m]0; fish in  pattypan [K\n[49C[?2004h[>4;1m[=5u= no chars get through?"
+        for &ch in "\x1b[?2004l\nbash"
             .as_bytes()
         {
             use super::TerminalInput::*;
-            println!("{char:?}, {:?}", t.parse_byte(char));
+            println!("{:?}, {:?}", ch as char, t.parse_byte(ch));
         }
     }
 }
